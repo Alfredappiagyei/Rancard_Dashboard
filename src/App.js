@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { decodeToken } from './utils/auth/token';
+import AppNavigation from './navigations/app_navigations';
+import AuthNavigation from './navigations/auth_navigations';
 
-function App() {
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = decodeToken(token);
+      if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
+        setIsAuthenticated(true);
+      } else {
+        localStorage.removeItem('token');
+      }
+    }
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {isAuthenticated ? <AppNavigation /> : <AuthNavigation/> }
+    </>
   );
 }
-
-export default App;
