@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Logo from "../../assets/happy-friends-looking-out-window.jpg";
 import { login } from '../../utils/auth/auth';
 
@@ -25,10 +27,13 @@ export default function Login() {
       const response = await login(values.email, values.password);
       if (response.data && response.data.access_token) {
         localStorage.setItem('token', response.data.access_token); // Store the token
-        window.location.reload(); 
-        navigate('/'); // Navigate to dashboard
-        
+        toast.success('Login successful!');
+        setTimeout(() => {
+          window.location.reload(); 
+          navigate('/'); // Navigate to dashboard
+        }, 1000);
       } else {
+        toast.error(response.message || 'Login failed');
         setLoginError(response.message || 'Login failed');
       }
     },
@@ -118,6 +123,7 @@ export default function Login() {
           <a href="#www" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Forgot password?</a>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
